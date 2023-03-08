@@ -1,3 +1,5 @@
+using System.Text;
+
 using FirebaseAdmin;
 
 using Google.Apis.Auth.OAuth2;
@@ -8,10 +10,11 @@ public static class ServiceCollectionExtensions
 {
     public static void AddNotificationService(this IServiceCollection service, IConfiguration configuration)
     {
+        var raw = Encoding.UTF8.GetBytes(configuration.GetValue<string>("Firebase:ServiceAccount"));
         FirebaseApp.Create(new AppOptions()
         {
             Credential = GoogleCredential.FromServiceAccountCredential(
-                ServiceAccountCredential.FromServiceAccountData(File.OpenRead("service_account.json"))
+                ServiceAccountCredential.FromServiceAccountData(new MemoryStream(raw))
             )
         });
 
